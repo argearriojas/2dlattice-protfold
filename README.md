@@ -10,10 +10,12 @@ This project presents two implementations for solving the problem of protein fol
     - Simulated annealing implementation on conventional CPU
     - Quantum annealing on QPU
 
-## Some preliminary results
+## Results
 
 - Protein folding simulated annealing
     - [6 amino acid](https://htmlpreview.github.io/?https://github.com/argearriojas/2dlattice-protfold/blob/master/2DLattice_MJ_SimulatedAnnealing/2DLattice_MJ_SimulatedAnnealing_L06.html)
     - [10 amino acid](https://htmlpreview.github.io/?https://github.com/argearriojas/2dlattice-protfold/blob/master/2DLattice_MJ_SimulatedAnnealing/2DLattice_MJ_SimulatedAnnealing_L10.html)
 - Protein folding, turn ancilla quantum annealing model, simulated annealing
     - [6 amino acid](https://htmlpreview.github.io/?https://github.com/argearriojas/2dlattice-protfold/blob/master/2DLattice_MJ_SimulatedAncillaEncoding/2DLattice_MJ_SimulatedAncillaEncoding_L06.html)
+- Protein folding, turn ancilla quantum annealing model, use QPU
+    - [6 amino acid](https://htmlpreview.github.io/?https://github.com/argearriojas/2dlattice-protfold/blob/master/2DLattice_MJ_QPUAncillaEncoding/2DLattice_MJ_QPUAncillaEncoding_L06.html)

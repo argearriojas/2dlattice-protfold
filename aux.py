@@ -1,6 +1,7 @@
 from joblib import Parallel, delayed
 from sympy import *
 import numpy as np
+import pandas as pd
 from datetime import datetime as dt
 import matplotlib.pyplot as plt
 from matplotlib import animation
@@ -370,7 +371,7 @@ def prepare_quantum(prot_seq):
     
     # Symbolic computation of Energy function
 
-    q = symbols([f'q{i}' for i in range(Nqbits)])
+    q = symbols([f'q{i:04d}' for i in range(Nqbits)])
     q = np.array(q)
 
     # 0 0 down
@@ -429,31 +430,16 @@ def prepare_quantum(prot_seq):
             return 0
 
     def H_back():
-        l_back = 5
+        l_back = 10
         return sum([back(j) for j in range(N-2)]) * l_back
 
     def H_olap():
-        l_olap = 5
+        l_olap = 10
         return sum([sum([l_olap*((1+i-j)%2)*(2**u(i,j) - g(i,j) - alpha(i, j))**2 for j in range(i+4, N)]) for i in range(N-4)])
 
     def H_inte():
         # eqn 32
         return sum([sum([w(i,j)*J(i,j)*(2-g(i,j)) for j in range(i+3, N)]) for i in range(N-3)])
-
-    def preprocess_expr(H):
-        # Helper function to clean resulting expressions
-        # some zero coefficients fail to evaluate to 0, rounding is necessary
-        # for all qbits, qi**n = qi. bc qi in [0,1]
-        H = expand(H)
-        tmp = H
-        for a in preorder_traversal(tmp):
-            if isinstance(a, Float):
-                H = H.subs(a, round(a, 8))
-        degr = Poly(H).degree()
-        for qi in q:
-            for n in reversed(range(2, degr + 1)):
-                H = H.subs(qi**n, qi)
-        return H
 
     # Build energy terms (symbolic expressions)
     Hb = H_back()
@@ -462,9 +448,9 @@ def prepare_quantum(prot_seq):
     
     energy_expr = Hb + Ho + Hi
 
-    return prot_seq, q, energy_expr
+    return prot_seq, q, energy_expr, (Hb, Ho, Hi)
 
-
+    
 def simulate_quantum(prot_seq, q_sym, energy_expr, sched, jobid=0):
 
     # Callable function to compute energy
@@ -588,3 +574,27 @@ def show_video():
     return HTML(data='''<video alt="test" controls>
                            <source src="data:video/mp4;base64,{0}" type="video/mp4" />
                         </video>'''.format(encoded.decode('ascii')))
+
+
+def viz_short_smpl(smpl, prot_seq, q, energy_func):
+    qstr_short = [smpl[k] if k in smpl.keys() else 0 for k in q[3:]]
+    qstr = np.array([[0, 1, 0] + qstr_short])
+    make_viz(qstr, prot_seq, movie=False, energy_func=energy_func)
+
+
+def preprocess_expr(H, q):
+    # Helper function to clean resulting expressions
+    # some zero coefficients fail to evaluate to 0, rounding is necessary
+    # for all qbits, qi**n = qi. bc qi in [0,1]
+    
+    H = expand(H).evalf()
+    tmp = H
+    for a in preorder_traversal(tmp):
+        if isinstance(a, Float):
+            H = H.subs(a, round(a, 8))
+    degr = Poly(H).degree()
+    for qi in q:
+        for n in reversed(range(2, degr + 1)):
+            H = H.subs(qi**n, qi)
+    return H
+
