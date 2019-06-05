@@ -348,7 +348,7 @@ def u(i, j):
     return np.int(((1 + j - i) % 2) * np.ceil(2*np.log2(j - i)))
 
 
-def prepare_quantum(prot_seq):
+def prepare_quantum(prot_seq, return_Hs=False):
 
     # length of the sequence
     N = len(prot_seq)
@@ -434,6 +434,8 @@ def prepare_quantum(prot_seq):
         return sum([back(j) for j in range(N-2)]) * l_back
 
     def H_olap():
+        # Idea, l_olap needs to big large enough so that its penalization compensates the favoring term in H_inte
+        # so it would be good it we customize each l_olap according to each Jij
         l_olap = 10
         return sum([sum([l_olap*((1+i-j)%2)*(2**u(i,j) - g(i,j) - alpha(i, j))**2 for j in range(i+4, N)]) for i in range(N-4)])
 
@@ -442,13 +444,16 @@ def prepare_quantum(prot_seq):
         return sum([sum([w(i,j)*J(i,j)*(2-g(i,j)) for j in range(i+3, N)]) for i in range(N-3)])
 
     # Build energy terms (symbolic expressions)
-    Hb = H_back()
-    Ho = H_olap() if noq > 0 else 0
-    Hi = H_inte()
+    Hb = (H_back())
+    Ho = (H_olap()) if noq > 0 else 0
+    Hi = (H_inte())
     
     energy_expr = Hb + Ho + Hi
 
-    return prot_seq, q, energy_expr, (Hb, Ho, Hi)
+    if return_Hs:
+        return prot_seq, q, energy_expr, (Hb, Ho, Hi)
+    else:
+        return prot_seq, q, energy_expr
 
     
 def simulate_quantum(prot_seq, q_sym, energy_expr, sched, jobid=0):
