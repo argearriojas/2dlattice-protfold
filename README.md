@@ -19,3 +19,6 @@ This project presents two implementations for solving the problem of protein fol
     - [6 amino acid](https://htmlpreview.github.io/?https://github.com/argearriojas/2dlattice-protfold/blob/master/2DLattice_MJ_SimulatedAncillaEncoding/2DLattice_MJ_SimulatedAncillaEncoding_L06.html)
 - Protein folding, turn ancilla quantum annealing model, use QPU
     - [6 amino acid](https://htmlpreview.github.io/?https://github.com/argearriojas/2dlattice-protfold/blob/master/2DLattice_MJ_QPUAncillaEncoding/2DLattice_MJ_QPUAncillaEncoding_L06.html)
+
+## Slides available
+- [PDF Slides](https://github.com/argearriojas/2dlattice-protfold/blob/master/Protein%20Folding,%202D%20MJ%20Lattice%20model%20on%20DWave%20quantum%20annealing%20hardware.pdf)
